@@ -89,34 +89,44 @@ bkgComp::bkgComp() {
 
 
 void bkgComp::Init(TString SourceName, int TB){
+  expectValue= 0;
+  errValue = 0; 
   sourceName = SourceName.Data();
   // load all histograms and the expected value.
   TString fname;
   TString histogramType;
   timeBin = TB;
-  TFile* infile = new TFile();
 
   histogramType = "S1Log10S2_TH2F"; 
   fname = getFileName(histogramType, sourceName, timeBin);
   cout<<fname.Data()<<endl;
-  infile->Open(fname.Data() ,"read");
-  S1Log10S2_DT1 = (TH2F*) infile->Get("DT1");
-  S1Log10S2_DT1->SetDirectory(0);
-  S1Log10S2_DT2 = (TH2F*) infile->Get("DT2");
-  S1Log10S2_DT1->SetDirectory(0);
-  S1Log10S2_DT3 = (TH2F*) infile->Get("DT3");
-  S1Log10S2_DT3->SetDirectory(0);
-  S1Log10S2_DT4 = (TH2F*) infile->Get("DT4");
-  S1Log10S2_DT4->SetDirectory(0);
-
+  TFile* infile = new TFile(fname.Data() ,"read");
+  if (!infile->IsOpen()){
+    cout<<"using uniform "<< histogramType.Data <<"spectrum for "<<sourceName.Data()<<endl;
+    fname = getFileName(histogramType, sourceName, timeBin);
+    cout<<fname.Data()<<endl;
+    infile->Open(fname.Data() ,"read")
+  }
+  TH2F* DT1 = (TH2F*) infile->Get("DT1");
+  S1Log10S2_DT1 = (TH2F*) DT1->Clone();
+  TH2F* DT2 = (TH2F*) infile->Get("DT2");
+  S1Log10S2_DT2 = (TH2F*) DT2->Clone();
+  TH2F* DT3 = (TH2F*) infile->Get("DT3");
+  S1Log10S2_DT3 = (TH2F*) DT3->Clone();
+  TH2F* DT4 = (TH2F*) infile->Get("DT4");
+  S1Log10S2_DT4 = (TH2F*) DT4->Clone();
+  
+  if (!infile->IsOpen()) {
+    cout<<"no valid input for "<<sourceName.Data()<<endl;
+  }
   Notify();
 }
 
 bool bkgComp::Notify()
 {  
-  cout<<"expected value: %.4e"<< expectValue <<endl;
-  cout<<"expected value err : %.4e"<< errValue <<endl;
-  cout<<"entries in S1Log10S2: "<<"\nDT1:" <<endl;
+  cout<<"expected value: "<< expectValue <<endl;
+  cout<<"expected value err : "<< errValue <<endl;
+  cout<<"entries in S1Log10S2: "<<"\nDT1: "<<S1Log10S2_DT1->Integral()<<"\nDT2: "<<S1Log10S2_DT2->Integral()<<"\nDT3: "<<S1Log10S2_DT3->Integral()<<"\nDT4: "<<S1Log10S2_DT4->Integral() <<endl;
   return 1;
 }
 
@@ -168,6 +178,8 @@ bkgCompFull::~bkgCompFull()
 
 
 void bkgCompFull::Init(TString SourceName){
+  expectValue= 0;
+  errValue = 0; 
   sourceName =  SourceName;
   bkg_tb1.Init(sourceName, 1);
   bkg_tb2.Init(sourceName, 2);
@@ -180,10 +192,9 @@ void bkgCompFull::Init(TString SourceName){
 }
 
 
-
-
 int paramBkg(){
-  bkgCompFull a("Ar37");
+  bkgCompFull uniform("uniform"); //default spectrum with uniform energy and uniform spacial distribution in the detector. 
+  bkgCompFull ar37("Ar37");
   return 1;
 }
 
