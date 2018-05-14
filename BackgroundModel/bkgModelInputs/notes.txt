@@ -1,0 +1,3 @@
+this file is generated with mistake.
+1) LibNEST Electricfield=0 for all detector.
+2) LibNEST Fr=0 for all detector

@@ -1,6 +1,6 @@
 // parameter for background model
-#ifndef PARAMBKF_C
-#define PARAMBKF_C 1
+#ifndef PARAMBKG_C
+#define PARAMBKG_C 1
 
 
 //c lib
@@ -20,181 +20,47 @@
 #include "TH2F.h"
 #include "TH3F.h"
 #include "TMath.h"
-#include "TCanvas.h"
 #include "TCut.h"
 #include "TFile.h"
 #include "TDirectory.h"
 #include "TStopwatch.h"
-#include "TImage.h"
 #include "TSystem.h"
 #include "TProfile.h"
-#include "TLegend.h"
-#include "TGraph.h"
-#include "TGraphErrors.h"
-#include "TGraphAsymmErrors.h"
-#include "TColor.h"
 #include "TF1.h"
-#include "TLatex.h"
-#include "TGaxis.h"
-#include "TAxis.h"
-#include "TAttAxis.h"
+
 
 //custom libs
-class bkgComp;
-class bkgCompFull;
-
+#include "bkgClass.C"
+#include "../Parameters.h"
 using namespace std;
 
+// expected value 
+// in unit of DRU (1.e-3 per kg per day per keV)
+//#define EXPOSURE 337.06
+//#define MASSACTIVEVOLUME 250.9 // -Curt, see PRD
+
+double EXPUniform=1.;
+double EXP8B=.16/250.9;// From Jeremy, 06302016, S1 [0 50], Log10S2 [2 4], DriftTime [40, 300] 
+double EXPAccidental=0.0037788/250.9; //nExpectedAccidental = 0.0037788 * EXPOSURE; //this is Tomasz's estimate for S2raw > 200 phd. from ImportAccidentalModel.h
+double EXPAr37=0.9e-3;//estimate in data Wei. We cannot really distinguish Ar37 or ER abnormally. so I choose this value  
+double EXPRnKr=1.;
+double EXPComptonBottom==1.;
+double EXPComptonRest;
+double EXPKr83=2.e-3;
+double EXPXe127=;
+double EXPneutron; 
 
 
-
-
-
-//-------each individual time bins.
-class bkgComp {
-public :
-  TString sourceName;
-  double expectValue;
-  double errValue;
-  int timeBin;
-  TH2F* S1Log10S2_DT1;
-  TH2F* S1Log10S2_DT2;
-  TH2F* S1Log10S2_DT3;
-  TH2F* S1Log10S2_DT4;
-  TH2F* S1S2_DT1;
-  TH2F* S1S2_DT2;
-  TH2F* S1S2_DT3;
-  TH2F* S1S2_DT4;
-  TH3F* rphidrift_DT1;
-  TH3F* rphidrift_DT2;
-  TH3F* rphidrift_DT3;
-  TH3F* rphidrift_DT4;
-  bkgComp();
-  bkgComp(TString SourceName, int TB);
-  virtual ~bkgComp();
-  virtual void Init(TString sourceName, int TB);
-  virtual bool Notify();
-  TString getFileName(TString histogramType, TString sourceName, int timeBin);
-};
-
-bkgComp::bkgComp(TString SourceName, int TB) {
-
-   Init(SourceName, TB);
-}
-
-bkgComp::bkgComp() {
-  expectValue= 0;
-  errValue = 0; 
-}
-
-
-void bkgComp::Init(TString SourceName, int TB){
-  expectValue= 0;
-  errValue = 0; 
-  sourceName = SourceName.Data();
-  // load all histograms and the expected value.
-  TString fname;
-  TString histogramType;
-  timeBin = TB;
-
-  histogramType = "S1Log10S2_TH2F"; 
-  fname = getFileName(histogramType, sourceName, timeBin);
-  cout<<fname.Data()<<endl;
-  TFile* infile = new TFile(fname.Data() ,"read");
-  if (!infile->IsOpen()){
-    cout<<"using uniform "<< histogramType.Data <<"spectrum for "<<sourceName.Data()<<endl;
-    fname = getFileName(histogramType, sourceName, timeBin);
-    cout<<fname.Data()<<endl;
-    infile->Open(fname.Data() ,"read")
-  }
-  TH2F* DT1 = (TH2F*) infile->Get("DT1");
-  S1Log10S2_DT1 = (TH2F*) DT1->Clone();
-  TH2F* DT2 = (TH2F*) infile->Get("DT2");
-  S1Log10S2_DT2 = (TH2F*) DT2->Clone();
-  TH2F* DT3 = (TH2F*) infile->Get("DT3");
-  S1Log10S2_DT3 = (TH2F*) DT3->Clone();
-  TH2F* DT4 = (TH2F*) infile->Get("DT4");
-  S1Log10S2_DT4 = (TH2F*) DT4->Clone();
-  
-  if (!infile->IsOpen()) {
-    cout<<"no valid input for "<<sourceName.Data()<<endl;
-  }
-  Notify();
-}
-
-bool bkgComp::Notify()
-{  
-  cout<<"expected value: "<< expectValue <<endl;
-  cout<<"expected value err : "<< errValue <<endl;
-  cout<<"entries in S1Log10S2: "<<"\nDT1: "<<S1Log10S2_DT1->Integral()<<"\nDT2: "<<S1Log10S2_DT2->Integral()<<"\nDT3: "<<S1Log10S2_DT3->Integral()<<"\nDT4: "<<S1Log10S2_DT4->Integral() <<endl;
-  return 1;
-}
-
-bkgComp::~bkgComp()
-{
-  cout<<"delete bkgComp."<<endl;
-}
-
-TString bkgComp::getFileName(TString histogramType, TString SourceName, int TimeBin){
-  return TString::Format("Bkg_%s_%s_TB%1d.root", histogramType.Data(), SourceName.Data(),  TimeBin);
-}
-
-
-
-
-
-
-
-
-//------- full components with 4 timebins.
-class bkgCompFull{
-public :
-  TString sourceName;
-  bkgComp bkg_tb1;
-  bkgComp bkg_tb2;
-  bkgComp bkg_tb3;
-  bkgComp bkg_tb4;
-  double expectValue;
-  double errValue;
-  bkgCompFull();
-  bkgCompFull(TString SourceName);
-  virtual ~bkgCompFull();
-  virtual void Init(TString sourceName);
-};
-
-bkgCompFull::bkgCompFull(){
-  expectValue =0;
-  errValue = 0;
-}
-
-bkgCompFull::bkgCompFull(TString SourceName){
-  Init(SourceName);
-}
-
-bkgCompFull::~bkgCompFull()
-{
-  cout<<"delete bkgCompFull."<<endl;
-}
-
-
-void bkgCompFull::Init(TString SourceName){
-  expectValue= 0;
-  errValue = 0; 
-  sourceName =  SourceName;
-  bkg_tb1.Init(sourceName, 1);
-  bkg_tb2.Init(sourceName, 2);
-  bkg_tb3.Init(sourceName, 3);
-  bkg_tb4.Init(sourceName, 4);
-  bkg_tb1.Notify();
-  bkg_tb2.Notify();
-  bkg_tb3.Notify();
-  bkg_tb4.Notify();
-}
-
+//end expect value
+// in unit of mDRU (1.e-3 per kg per day per keV)
 
 int paramBkg(){
-  bkgCompFull uniform("uniform"); //default spectrum with uniform energy and uniform spacial distribution in the detector. 
+  bkgCompFull uniform("Uniform"); //default spectrum with uniform energy and uniform spacial distribution in the detector. 
   bkgCompFull ar37("Ar37");
+  ar37.expectValue =EXPAR37*EXPOSURE;
+  ar37.errValue =ERRAR37*EXPOSURE;
+  cout<<ar37.expectValue<<endl;
+  ar37.bkg_tb2.Notify();
   return 1;
 }
 
