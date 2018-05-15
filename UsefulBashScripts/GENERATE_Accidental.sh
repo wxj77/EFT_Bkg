@@ -4,6 +4,8 @@
 sName="Accidental"
 
 #use spacial uniform distribution
+#short way to generate the spatial PDF, it might not be exactly accurate.
+# for accidental model, you need to scale the uniform PDF by 1/(r_{out}^{2}-r_{in}^{2}) to get the correct pdf.
 for f in ../PDFs/*TH3F_Uniform*.root; do
   fnew=${f/Uniform/${sName}}
   echo ${fnew}
@@ -30,7 +32,7 @@ for TB in 1 2 3 4; do
   # RnKr, ComptonBottom, ComptonRest: uniform energy between 0 to 100 keV.
   # read dat files to root
   # fill root results to s1s2, s1log10s2 histoogram
-  root -q -b -l "./GenerateAccidental.C(${TB})"
+  root -q -b -l "./GenerateAccidental.C(\"../PDFs/\",${TB})"
 done 
 
 

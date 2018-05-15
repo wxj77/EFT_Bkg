@@ -13,7 +13,7 @@
 #include "IsoS1S2Spectrum.C"
 //int GenerateAccidental(int tb=1);
 
-int GenerateAccidental(int tb=1){
+int GenerateAccidental(TString folder="../PDFs/", int tb=1){
 
 TF1* fisoS1 = new TF1("fisoS1",isoS1,0,1.e3,0);
 TF1* fisoS2 = new TF1("fisoS2",isoS2,0,1.e6,0);
@@ -60,7 +60,7 @@ TH1F* Accidental_S2 = new TH1F("Accidental_S2", "; log_{10}S2 [phd]; event rate 
 
 
 if(1){
-TString fname=TString::Format("Bkg_S1Log10S2_TH2F_Accidental_TB%d.root", tb);
+TString fname=TString::Format("%s/Bkg_S1Log10S2_TH2F_Accidental_TB%d.root", folder.Data(),tb);
 TFile* file = new TFile(fname.Data(),"recreate");
 file->cd();
 double scale = (DTMAX-DTMIN)/4. *1.e-6*24*60*60; //4 time bin, 1.e-6 us to s 24*60*60 s-1 to day^{-1} 
@@ -89,6 +89,14 @@ DT1->SetName("DT1");
 DT2->SetName("DT2");
 DT3->SetName("DT3");
 DT4->SetName("DT4");
+
+cout << "total counts expected for accidental model S1Log10S2 is : "<< DT1->Integral()+DT2->Integral()+DT3->Integral()+DT4->Integral() << " cts day^{-1}"<<endl;
+
+DT1->Scale(1./DT1->Integral());
+DT2->Scale(1./DT2->Integral());
+DT3->Scale(1./DT3->Integral());
+DT4->Scale(1./DT4->Integral());
+
 DT1->Write();
 DT2->Write();
 DT3->Write();
@@ -99,7 +107,7 @@ file->Close();
 
 
 if(1){
-TString fname=TString::Format("Bkg_S1S2_TH2F_Accidental_TB%d.root", tb);
+TString fname=TString::Format("%s/Bkg_S1S2_TH2F_Accidental_TB%d.root",folder.Data(), tb);
 TFile* file = new TFile(fname.Data(),"recreate");
 file->cd();
 double scale = (DTMAX-DTMIN)/4. *1.e-6*24*60*60; //4 time bin, 1.e-6 us to s 24*60*60 s-1 to day^{-1} 
@@ -121,10 +129,21 @@ Accidental_S1->Write();
 Accidental_S2->Write();
 Accidental_Log10S2->Write();
 
+
+
+
 DT1->SetName("DT1");
 DT2->SetName("DT2");
 DT3->SetName("DT3");
 DT4->SetName("DT4");
+
+cout << "total counts expected for accidental model S1S2 is : "<< DT1->Integral()+DT2->Integral()+DT3->Integral()+DT4->Integral() << " cts day^{-1}"<<endl;
+
+DT1->Scale(1./DT1->Integral());
+DT2->Scale(1./DT2->Integral());
+DT3->Scale(1./DT3->Integral());
+DT4->Scale(1./DT4->Integral());
+
 DT1->Write();
 DT2->Write();
 DT3->Write();

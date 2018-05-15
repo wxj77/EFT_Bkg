@@ -65,6 +65,8 @@ using namespace std;
 int ReadROOTToTH2F(TString datafile, TString SourceName, int TB){
 
 //create files
+double totalpasscut;
+
 
 	cout<<datafile.Data()<<endl;
 	TFile* in_file = new TFile(datafile.Data(), "READ");
@@ -91,6 +93,7 @@ TFile* out_file = new TFile( outputFile.Data(), "recreate");
 out_file->cd();
 
 int tb=1;
+totalpasscut=0;
 for( tb=1;tb<=nDtModel; tb++)
 	{
 		
@@ -110,12 +113,20 @@ for( tb=1;tb<=nDtModel; tb++)
 			if (ins1 && inlog10s2 && indt) {h1->Fill(S1,log10(S2));}
 		}
 			out_file->cd();
-		//h1->Scale(1./h1->Integral());
+	    totalpasscut+=h1->Integral();
+		h1->Scale(1./h1->Integral());
 		h1->Write();
   		
 	}
+	
+    cout << "total fraction(not 8B) pass cut for S1Log10S2 is : "<< totalpasscut/in_tree->GetEntries() << ""<<endl;
+    cout << "total fraction(8B) pass cut for S1Log10S2 is : "<< totalpasscut << "/(how many events you generated, typically 1000000000.) cts kg^{-1} day^{-1}"<<endl;
+    cout << "total fraction(8B) recorded(do not use this ) : "<< in_tree->GetEntries() <<endl;
+  	cout<<"Done"<<endl;
+  	cout<<endl;
 out_file->Close();
 
+totalpasscut=0.;
 //S1S2
 TString outputFile2 = TString::Format("../../PDFs/Bkg_S1S2_TH2F_%s_TB%d.root",SourceName.Data(), TB);
 TFile* out_file2 = new TFile( outputFile2.Data(), "RECREATE");
@@ -139,17 +150,26 @@ for(int tb=1; tb<=nDtModel; tb++)
 			if (ins1 && ins2 && indt) {h1->Fill(S1,S2);}
 		}
 			out_file2->cd();
-		//h1->Scale(1./h1->Integral());
+	    totalpasscut+=h1->Integral();
+		h1->Scale(1./h1->Integral());
 		h1->Write();
   		
 	}
-out_file2->Close();
 
 
-	return 1;
 
+
+
+    cout << "total fraction(not 8B) pass cut for S1S2 is : "<< totalpasscut/in_tree->GetEntries() << ""<<endl;
+    cout << "total fraction(8B) pass cut for S1S2 is : "<< totalpasscut << "/(how many events you generated, typically 1000000000.) cts kg^{-1} day^{-1}"<<endl;
+    cout << "total fraction(8B) recorded(do not use this ) : "<< in_tree->GetEntries() <<endl;
+  
+  out_file2->Close();
+  
   	cout<<"Done"<<endl;
   	cout<<endl;
+  	
+  		return 1;
 }
 
 

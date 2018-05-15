@@ -108,7 +108,7 @@ int main(int argc, char** argv){
 //read dat file
 	while(!infile.eof()){
 		iLine++;
-		if( iLine % 1000 == 0 ) {cout<<"Reading line "<<iLine<<endl;}
+//		if( iLine % 1000 == 0 ) {cout<<"Reading line "<<iLine<<endl;}
 		std::getline(infile, readline);
 		std::istringstream iss(readline);
 		if(!(iss>>br_energy_keV>>br_Efield>>br_DriftTime>>br_z_cm>>Nph>>Ne
