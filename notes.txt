@@ -18,7 +18,9 @@ Rachel's thesis: (Kr85) page 207
 Elizabeth: alpha rate for Rn chain.
 
 No Xenon 127 is considered now, because no lines are seen at high energy for this EC decay(from Evan, Kelsey), even though it could still exist with small number.
-
+# 8B: B8 , Ar37: 2.8keV, Kr83: 42keV
+  # Xe127: 0.096 4keV(l) + 0.715 28.6 keV(kalpha) + 0.1339 32.5keV(kbeta1) + 0.0303(rest) 33 keV 
+http://www.nucleide.org/DDEP_WG/Nuclides/Xe-127_tables.pdf
 
 
 

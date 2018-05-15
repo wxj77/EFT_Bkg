@@ -31,11 +31,11 @@
 #define NS1BIN 199
 
 #define LOG10S2MIN 2.0
-#define LOG10S2MAX 4.0
-#define NLOGS2BIN 200
+#define LOG10S2MAX 4.6
+#define NLOGS2BIN 260
 
-#define LS2MIN 200
-#define LS2MAX 40200
+#define LS2MIN 199
+#define LS2MAX 40000
 #define NLS2BIN 200
 
 #define PHIMIN -3.15

@@ -6,10 +6,10 @@ This repositary is to record how the background for EFT.
 
 1. copy folder PDFs /LUXLimits/EFTRun4/BackgroundModel/PDFs
 
-  # if you want to change parameter setting in Parameters.h and paramBkgGen.C
+  # if you want to change parameter setting in Parameters.h and ~~paramBkgGen.C~~
   cp yout_path_to/Parameters.h .
   
-  you need to manually change paramBkgGen.C to give you the S1 S2 LogS2 bins that you want. 
+  ~~you need to manually change paramBkgGen.C to give you the S1 S2 LogS2 bins that you want.~~ 
   bash GENERATE_ALL.sh  
   # this will regenerate all backgrounds if it is possible.
 
