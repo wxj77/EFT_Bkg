@@ -1,3 +1,12 @@
 [submodule "LibNEST_TB1"]
 	path = LibNEST_TB1
 	url = git@github.com:luxdarkmatter/LibNEST.git
+[submodule "LibNEST_TB2"]
+	path = LibNEST_TB2
+	url = git@github.com:luxdarkmatter/LibNEST.git
+[submodule "LibNEST_TB3"]
+	path = LibNEST_TB3
+	url = git@github.com:luxdarkmatter/LibNEST.git
+[submodule "LibNEST_TB4"]
+	path = LibNEST_TB4
+	url = git@github.com:luxdarkmatter/LibNEST.git

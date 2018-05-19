@@ -9,6 +9,9 @@ This repositary is to record how the background for EFT.
   # if you want to change parameter setting in Parameters.h and ~~paramBkgGen.C~~
   cp yout_path_to/Parameters.h .
   
+  # make sure you have compiled the newest nest model in LibNEST_TB1, LibNEST_TB2, LibNEST_TB3, LibNEST_TB4 folders, to represent the 4 time bins that is used for generate background model. Now LibNEST_TB1 is submodule link to LibNEST repo at git@github.com:luxdarkmatter/LibNEST.git, the other three is copied from TB1.
+  # to compile LibNEST, follow instructions in LibNEST
+  
   ~~you need to manually change paramBkgGen.C to give you the S1 S2 LogS2 bins that you want.~~ 
   bash GENERATE_ALL.sh  
   # this will regenerate all backgrounds if it is possible.
