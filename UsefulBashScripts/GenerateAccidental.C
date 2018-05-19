@@ -1,16 +1,46 @@
 #ifndef GENERATEAccidental
 #define GENERAREAccidental 1
 
+
+
+//c lib
+#include <iostream>
+#include <fstream>
+#include <sstream>
+#include <math.h>
+#include <cmath>
+#include <cstdlib>
+#include <string.h>
+
+//root lib
+#include "TString.h"
+#include "TTree.h"
+#include "TChain.h"
 #include "TH1F.h"
 #include "TH2F.h"
 #include "TH3F.h"
-#include "TF1.h"
+#include "TMath.h"
+#include "TCut.h"
 #include "TFile.h"
-#include "TString.h"
+#include "TDirectory.h"
+#include "TStopwatch.h"
+#include "TSystem.h"
+#include "TProfile.h"
+#include "TF1.h"
+
+
+//custom libs
+//class bkgComp;
+//class bkgCompFull;
+
+using namespace std;
+
 #include "../Parameters.h"
 
 
 #include "IsoS1S2Spectrum.C"
+#include "EventCuts.C"
+
 //int GenerateAccidental(int tb=1);
 
 int GenerateAccidental(TString folder="../PDFs/", int tb=1){
@@ -65,22 +95,27 @@ TFile* file = new TFile(fname.Data(),"recreate");
 file->cd();
 double scale = (DTMAX-DTMIN)/4. *1.e-6*24*60*60; //4 time bin, 1.e-6 us to s 24*60*60 s-1 to day^{-1} 
 
-TH2F* DT1 = new TH2F("DT1", "; S1 [phd] ; S2 [phd]; event rate [cts day^{-1}]", NS1BIN ,S1MIN,S1MAX, NLOGS2BIN, LOG10S2MIN, LOG10S2MAX);
+TH2F* DT1 = new TH2F("DT1", "; S1 [phd] ; log_{10} S2 [phd]; event rate [cts day^{-1}]", NS1BIN ,S1MIN,S1MAX, NLOGS2BIN, LOG10S2MIN, LOG10S2MAX);
   for (int ii=1; ii<NS1BIN+1 ; ii++){
   for (int jj=1; jj<NLOGS2BIN+1 ; jj++){
 
     double x  =  Accidental_S1->GetBinContent(ii);
     double y =  Accidental_Log10S2->GetBinContent(jj);
 //    if (ii==1)   cout<<x*y*scale<<endl;
-     DT1->SetBinContent(ii, jj, x*y*scale);
+    double S1 = Accidental_S1->GetBinCenter(ii);
+    double S2 = pow(10., Accidental_Log10S2->GetBinCenter(jj));
+    double vS[5]={S1, S1, S1, S2, S2};
+    if (EventCuts(vS))  DT1->SetBinContent(ii, jj, x*y*scale);
+    else DT1->SetBinContent(ii, jj, 0.);
   }
 
   }
 
-TH2F* DT2 = (TH2F*)DT1->Clone();
-TH2F* DT3 = (TH2F*)DT1->Clone();
-TH2F* DT4 = (TH2F*)DT1->Clone();
-  
+TH2F* DT2 = (TH2F*)DT1->Clone("DT2");
+TH2F* DT3 = (TH2F*)DT1->Clone("DT3");
+TH2F* DT4 = (TH2F*)DT1->Clone("DT4");
+
+
 Accidental_S1->Write();
 Accidental_S2->Write();
 Accidental_Log10S2->Write();
@@ -117,13 +152,17 @@ TH2F* DT1 = new TH2F("DT1", "; S1 [phd] ; S2 [phd]; event rate [cts day^{-1}]", 
   for (int jj=1; jj<NLS2BIN+1 ; jj++){
     double x  =  Accidental_S1->GetBinContent(ii);
     double y =  Accidental_S2->GetBinContent(jj);
-     DT1->SetBinContent(ii, jj, x*y*scale);
+        double S1 = Accidental_S1->GetBinCenter(ii);
+    double S2 = Accidental_S2->GetBinCenter(jj);
+    double vS[5]={S1, S1, S1, S2, S2};
+    if (EventCuts(vS)) DT1->SetBinContent(ii, jj, x*y*scale);
+    else DT1->SetBinContent(ii, jj, 0.);
   }
   }
 
-TH2F* DT2 = (TH2F*)DT1->Clone();
-TH2F* DT3 = (TH2F*)DT1->Clone();
-TH2F* DT4 = (TH2F*)DT1->Clone();
+TH2F* DT2 = (TH2F*)DT1->Clone("DT2");
+TH2F* DT3 = (TH2F*)DT1->Clone("DT3");
+TH2F* DT4 = (TH2F*)DT1->Clone("DT4");
   
 Accidental_S1->Write();
 Accidental_S2->Write();
