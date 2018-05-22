@@ -47,7 +47,7 @@ double EventEfficiency(double * x, double *par=NULL){
 //  notes  from Evan Pease for Run4 data cuts
 //  # S1, S2 cuts...
 // Cuts on energy (less than 50 keVee):
-  bool value=0;
+  double value=0;
 //  bool value0=0, value1=0, value2=0, value3=0,value4=0;  
 //  value = value1 && value2 && value3 &&value4 && value0;
 

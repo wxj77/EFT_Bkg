@@ -12,18 +12,21 @@ using namespace std;
 
 void moveOldCode_UniformSpatial(){
 
-tb=4;
-TString fname=TString::Format("Bkg_rphidrift_TH3F_Uniform_TB%d.root", tb);
+tb=1;
+TString sname;
+sname = "RnKr";
+//sname = "ComptonRest";
+TString fname=TString::Format("./backup/Bkg_rphidrift_TH3F_%s_TB%d.root",sname.Data(), tb);
 TFile* file = new TFile(fname.Data(),"recreate");
 file->cd();
 
-TString nh1=TString::Format("RnKr_rphidrift_tb%d_R1_PHI1_DT1", tb);
+TString nh1=TString::Format("%s_rphidrift_tb%d_R1_PHI1_DT1", sname.Data(), tb);
 TH3F* DT1 = (TH3F*) _file0->Get(nh1.Data());
-TString nh2=TString::Format("RnKr_rphidrift_tb%d_R1_PHI1_DT2", tb);
+TString nh2=TString::Format("%s_rphidrift_tb%d_R1_PHI1_DT2", sname.Data(), tb);
 TH3F* DT2 = (TH3F*) _file0->Get(nh2.Data());
-TString nh3=TString::Format("RnKr_rphidrift_tb%d_R1_PHI1_DT3", tb);
+TString nh3=TString::Format("%s_rphidrift_tb%d_R1_PHI1_DT3", sname.Data(), tb);
 TH3F* DT3 = (TH3F*) _file0->Get(nh3.Data());
-TString nh4=TString::Format("RnKr_rphidrift_tb%d_R1_PHI1_DT4", tb);
+TString nh4=TString::Format("%s_rphidrift_tb%d_R1_PHI1_DT4", sname.Data(), tb);
 TH3F* DT4 = (TH3F*) _file0->Get(nh4.Data());
 
 DT1->SetName("DT1");

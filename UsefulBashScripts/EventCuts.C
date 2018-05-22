@@ -52,7 +52,8 @@ bool EventCuts(double * x, double *par=NULL){
  if  (S2_area_z_cor < (69419.7-(192.5787*S1_area_z_cor))) value1=1;
 
 //# Cuts on S1 size (note: if you don't have S1 spike count, just require S1_area_z_cor >= 1 and < 300):
- if ( (S1_area_z_cor<300) && ((S1_spiky_z_cor>=1) || ((S1_spiky_z_cor==0)*(S1_area>20))) ) value2=1;
+ if (   (S1_area_z_cor<300) && (  (S1_spiky_z_cor>=1) || ( (S1_spiky_z_cor==0)&&(S1_area>20) )  )   ) value2=1;
+//value2=1;
 
 //# Upper bounds on S2 area:
  if ( (((S2_area_z_cor<(pow(10.,4.5))) && (S1_area_z_cor>=50)) || ((log10(S2_area_z_cor)<(3.326*(pow(S1_area_z_cor, (-0.084))) + log10(S1_area_z_cor))) && (S1_area_z_cor<50))) ) value3=1;

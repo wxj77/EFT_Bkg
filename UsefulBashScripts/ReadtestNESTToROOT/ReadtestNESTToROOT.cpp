@@ -89,8 +89,11 @@ int main(int argc, char** argv){
   std::string z_mm=""; 
 
   int iEvtN=0;
-  int Nph, Ne, Nex = -1;
-	
+  float Nph, Ne, Nex = -1;
+  out_tree->Branch("Nph", &Nph, "Nph/F");	
+  out_tree->Branch("Ne", &Ne, "Ne/F");
+  out_tree->Branch("Nex", &Nex, "Nex/F");
+  	
   int counter = 0;
 	
   //Open up the .dat file
@@ -116,7 +119,7 @@ int main(int argc, char** argv){
     //		if( iLine % 1000 == 0 ) {cout<<"Reading line "<<iLine<<endl;}
     std::getline(infile, readline);
     std::istringstream iss(readline);
-    if(!(iss>>br_energy_keV>>br_Efield>>br_DriftTime>>x_mm>>y_mm>>z_mm>>br_z_cm>>Nph>>Ne
+    if(!(iss>>br_energy_keV>>br_Efield>>br_DriftTime>>x_mm>>y_mm>>z_mm>>Nph>>Ne
 	 >>br_s1_raw>>br_s1c>>br_s1s>>Nex>>br_s2_raw>>br_s2c)){
       iLine++; cout<<"error/end: "<<endl; std::getline(infile, readline); /*cout<<readline<<endl*/; continue;}	
     //if (br_s1c<=0.){continue;}
@@ -126,14 +129,13 @@ int main(int argc, char** argv){
 		
     br_x_cm = std::atof(x_mm.substr(0,x_mm.length()-1).c_str())/10.;//mm to cm
     br_y_cm = std::atof(y_mm.substr(0,y_mm.length()-1).c_str())/10.;//mm to cm
-    br_z_cm = std::atof(z_mm.substr(0,z_mm.length()-1).c_str())/10.; //mm to cm
+    br_z_cm = std::atof(z_mm.substr(0,z_mm.length()).c_str())/10.; //mm to cm
     br_r_cm = pow(pow(br_x_cm,2.)+pow(br_y_cm,2.), 0.5);
     br_phi = atan2(br_y_cm,br_x_cm);
     //cout <<"\t"<<br_DriftTime<<"\t"<<x_mm<<"\t"<<br_x_cm<<endl;
     //cout <<"\t"<<br_DriftTime<<"\t"<<y_mm<<"\t"<<br_y_cm<<endl;
     //cout <<"\t"<<br_DriftTime<<"\t"<<z_mm<<"\t"<<br_z_cm<<endl;	
-    cout <<"\t"<<br_DriftTime<<"\t"<<br_r_cm<<"\t"<<br_phi<<endl;	
-    //	br_z_cm = br_z_cm/10.;//convert mm to cm from br_z_cm.
+  //  cout <<"\t"<<br_DriftTime<<"\t"<<br_r_cm<<"\t"<<br_phi<<endl;	
     br_log10S2 = log10( br_s2c ); 
     out_tree->Fill(); //Fill new tree with info if single scatter
     counter++;iEvtN++;

@@ -29,6 +29,11 @@ http://www.nucleide.org/DDEP_WG/Nuclides/Xe-127_tables.pdf
 //--------Wei's note start from here.
 //
 
+the total life time for run 4 is 
+3.35687846338000018e+04 kg day, from parameter.h
+
+
+
 The energy of the is assumed to be a uniform distribution in xenon space for 
 
 I cannot use the Bkg_rphidrift_TH3F_RnKr_TB{timeBin}.root to estimate the expected uniform distribution for signal model or ^{8}B, ^{37}Ar. Because the single scatter activity is higher on the edge of the detector(this is the result I saw from the simulation). 

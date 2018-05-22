@@ -10,3 +10,6 @@
 [submodule "LibNEST_TB4"]
 	path = LibNEST_TB4
 	url = git@github.com:luxdarkmatter/LibNEST.git
+[submodule "PositionMapping"]
+	path = PositionMapping
+	url = git@github.com:luxdarkmatter/PositionMapping.git
