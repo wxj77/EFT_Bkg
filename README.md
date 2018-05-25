@@ -12,6 +12,8 @@ This repositary is to record how the background for EFT.
   # make sure you have compiled the newest nest model in LibNEST_TB1, LibNEST_TB2, LibNEST_TB3, LibNEST_TB4 folders, to represent the 4 time bins that is used for generate background model. Now they are all submodules link to LibNEST repo at git@github.com:luxdarkmatter/LibNEST.git.
   git submodule init
   git submodule update
+  switch to the correct detector setting. testNEST.cpp: line 46-49
+  comment unnessary outputs: testNEST.cpp: line 140-148, 354-395, NEST.cpp 469-474
   # to compile LibNEST, follow instructions in LibNEST
   
   ~~you need to manually change paramBkgGen.C to give you the S1 S2 LogS2 bins that you want.~~ 

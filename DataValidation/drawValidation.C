@@ -48,6 +48,12 @@
 
 using namespace std;
 
+
+bool drawer=1;
+bool drawnr=1;
+bool drawolder=1;
+bool drawoldnr=1;
+
 int drawValidation(TString datafile= "/home/wxj/EFT_Bkg/DataValidation/eft_bg_data_trial_05182018.root",int timeBin=1, int driftBin=1){
 int nPoints=0; 
 double s1s[100000];
@@ -262,8 +268,9 @@ datapoints->Draw("AP");
 
 
 //-----draw ER NR band
-  double width=2.0;
+  double width=3.0;
   long long iLine=-1,iEvent=0;
+  if(drawer){
   int ner=-1;
   double ers1[500];
   double er10[500];
@@ -299,25 +306,26 @@ for (int ii=0; ii<ner; ii++){
 }
 TGraph* ger50 = new TGraph(ner, ers1, er50);
 ger50->SetLineStyle(1);
-ger50->SetLineColor(kBlue);
+ger50->SetLineColor(kBlue-7);
 ger50->SetLineWidth(width);
 ger50->SetName("ger50");
 ger50->SetFillColor(0);
 ger50->Draw("same");
 TGraph* ger10 = new TGraph(ner, ers1, er10);
 ger10->SetLineStyle(2);
-ger10->SetLineColor(kBlue);
+ger10->SetLineColor(kBlue-7);
 ger10->SetLineWidth(width/1.5);
 ger10->SetName("ger10");
 ger10->Draw("same");
 TGraph* ger90 = new TGraph(ner, ers1, er90);
 ger90->SetLineStyle(2);
-ger90->SetLineColor(kBlue);
+ger90->SetLineColor(kBlue-7);
 ger90->SetLineWidth(width/1.5);
 ger90->SetName("ger90");
 ger90->Draw("same");
+}
 
-
+if (drawnr){
   iLine=-1;iEvent=0;
   int nnr=-1;
   double nrs1[500];
@@ -352,32 +360,136 @@ for (int ii=0; ii<nnr; ii++){
 }
 TGraph* gnr50 = new TGraph(nnr, nrs1, nr50);
 gnr50->SetLineStyle(1);
-gnr50->SetLineColor(kRed);
+gnr50->SetLineColor(kRed-7);
 gnr50->SetLineWidth(width);
 gnr50->SetName("gnr50");
 gnr50->SetFillColor(0);
 gnr50->Draw("same");
 TGraph* gnr10 = new TGraph(nnr, nrs1, nr10);
 gnr10->SetLineStyle(2);
-gnr10->SetLineColor(kRed);
+gnr10->SetLineColor(kRed-7);
 gnr10->SetLineWidth(width/1.5);
 gnr10->SetName("gnr10");
 gnr10->Draw("same");
 TGraph* gnr90 = new TGraph(nnr, nrs1, nr90);
 gnr90->SetLineStyle(2);
-gnr90->SetLineColor(kRed);
+gnr90->SetLineColor(kRed-7);
 gnr90->SetLineWidth(width/1.5);
 gnr90->SetName("gnr90");
 gnr90->Draw("same");
+}
+
+
+  if(drawolder||drawoldnr){
+  int nolder=-1;
+  int noldnr=-1;
+  double erolds1[500];
+  double eroldwid[500];
+  double erold10[500];
+  double erold50[500];
+  double erold90[500];
+  double nrolds1[500];
+  double nroldwid[500];
+  double nrold10[500];
+  double nrold50[500];
+  double nrold90[500];
+  double NESTmean, NESTmeane, NESTmeanErr, NESTmeanErre,	NESTwidth, NESTwidthe,	NESTwidthErr,NESTwidthErr;
+  TString ERoldfile = TString::Format("/home/wxj/EFT_Bkg/DataValidation/Run4Models_v3/TimeBin%d_%d_%d_ER_data.txt",timeBin, int(40.+(driftBin-1.)*65.), int(40.+(driftBin)*65.)  );
+  cout<<ERoldfile.Data()<<endl;
+  std::string line;
+  infile.open(ERoldfile.Data());
+  if(!infile){
+    cout<<"Invalid Input File!!!!!\n";
+  }
+
+  //skip first two lines
+//  std::string readline;	
+  std::getline(infile, readline);
+  std::getline(infile, readline);
+  //read dat file
+  while(!infile.eof()){
+    iLine++;
+    nolder++; 
+    noldnr++; 
+    //		if( iLine % 1000 == 0 ) {cout<<"Reading line "<<iLine<<endl;}
+    std::getline(infile, readline);
+    std::istringstream iss(readline);
+    if(!(iss>>erolds1[nolder]>>erold50[nolder]>>NESTmeane>>eroldwid[nolder]>>NESTmeanErre>>nrold50[nolder]>> NESTwidthe>>nroldwid[nolder]>>NESTwidthErr)){
+      iLine++; cout<<"error/end: "<<endl; std::getline(infile, readline); cout<<readline<<endl; continue;}	
+  }
+  infile.close();
+
+for (int ii=0; ii<nolder; ii++){
+  nrolds1[ii] = erolds1[ii];
+  erold10[ii]=erold50[ii]-1.282*eroldwid[ii]+ log10(erolds1[ii]);
+  erold90[ii]=erold50[ii]+1.282*eroldwid[ii]+ log10(erolds1[ii]);
+  erold50[ii]=erold50[ii]+ log10(erolds1[ii]);
+  nrold10[ii]=nrold50[ii]-1.282*nroldwid[ii]+ log10(nrolds1[ii]);
+  nrold90[ii]=nrold50[ii]+1.282*nroldwid[ii]+ log10(nrolds1[ii]);
+  nrold50[ii]=nrold50[ii]+ log10(nrolds1[ii]);
+//  cout<<nrolds1[ii]<<"\t"<<nrold50[ii]<<"\t"<<nrold10[ii]<<"\t"<<nrold90[ii]<<endl;
+}
+
+if(drawolder){
+TGraph* gerold50 = new TGraph(nolder-1, erolds1, erold50);
+gerold50->SetLineStyle(1);
+gerold50->SetLineColor(kBlue+2);
+gerold50->SetLineWidth(width);
+gerold50->SetName("gerold50");
+gerold50->SetFillColor(0);
+gerold50->Draw("same");
+TGraph* gerold10 = new TGraph(nolder-1, erolds1, erold10);
+gerold10->SetLineStyle(2);
+gerold10->SetLineColor(kBlue+2);
+gerold10->SetLineWidth(width/1.5);
+gerold10->SetName("gerold10");
+gerold10->Draw("same");
+TGraph* gerold90 = new TGraph(nolder-1, erolds1, erold90);
+gerold90->SetLineStyle(2);
+gerold90->SetLineColor(kBlue+2);
+gerold90->SetLineWidth(width/1.5);
+gerold90->SetName("gerold90");
+gerold90->Draw("same");
+}
+
+
+if(drawoldnr){
+TGraph* gnrold50 = new TGraph(noldnr-1, nrolds1, nrold50);
+gnrold50->SetLineStyle(1);
+gnrold50->SetLineColor(kRed+2);
+gnrold50->SetLineWidth(width);
+gnrold50->SetName("gnrold50");
+gnrold50->SetFillColor(0);
+gnrold50->Draw("same");
+TGraph* gnrold10 = new TGraph(noldnr-1, nrolds1, nrold10);
+gnrold10->SetLineStyle(2);
+gnrold10->SetLineColor(kRed+2);
+gnrold10->SetLineWidth(width/1.5);
+gnrold10->SetName("gnrold10");
+gnrold10->Draw("same");
+TGraph* gnrold90 = new TGraph(noldnr-1, nrolds1, nrold90);
+gnrold90->SetLineStyle(2);
+gnrold90->SetLineColor(kRed+2);
+gnrold90->SetLineWidth(width/1.5);
+gnrold90->SetName("gnrold90");
+gnrold90->Draw("same");
+}
+
+}
+
 
 //------------------
 //------Legend
 //------------------
   TLegend* tl = new TLegend(0.15,0.8,0.85,0.9);
   tl->SetNColumns(3);
-  tl->AddEntry(datapoints, "data");
-  tl->AddEntry(ger50, "ER band");
-  tl->AddEntry(gnr50, "NR band");
+       if(drawolder) tl->AddEntry(gerold50, "ER band (Run 4 WS)");
+  if(drawoldnr) tl->AddEntry(gnrold50, "NR band (Run 4 WS)");
+      tl->AddEntry(datapoints, "data");
+ if(drawer) tl->AddEntry(ger50, "ER band (Run 4 EFT/IDM)");
+  if(drawnr) tl->AddEntry(gnr50, "NR band (Run 4 EFT/IDM)");
+
+
   tl->SetTextSize(0.03);
   tl->SetFillColor(kWhite);
   tl->SetFillStyle(0);

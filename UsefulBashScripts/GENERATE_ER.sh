@@ -19,8 +19,10 @@ cd ..
 if [ ${option} \> 90 ]; then
 echo "long run: generate libnest result and read it to root"
 for TB in 1 2 3 4; do
-  ../LibNEST_TB${TB}/testNEST 1000000 beta 0 130 -1 -1,-1,-1 >../Data/${sName}_TB${TB}_newlibnest.dat
-                              
+#  ../LibNEST_TB${TB}/testNEST 1000000 beta 0 130 -1 -1,-1,-1 >../Data/${sName}_TB${TB}_newlibnest.dat
+#  ../LibNEST_TB${TB}/testNEST 1000000 gamma 0 130 -1 -1,-1,-1 >../Data/${sName}_TB${TB}_newlibnest.dat
+  ../LibNEST_TB${TB}/testNEST 1000000 weighted 0 130 -1 -1,-1,-1 >../Data/${sName}_TB${TB}_newlibnest.dat
+                                  
 done
 
 for TB in 1 2 3 4; do
